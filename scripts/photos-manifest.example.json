@@ -1,0 +1,12 @@
+{
+  "shooting/001.jpg": {
+    "altText": "Portrait en lumière naturelle d’une personne regardant hors champ",
+    "caption": "Portrait extérieur",
+    "isFeatured": true,
+    "isPublished": true
+  },
+  "sport/002.jpg": {
+    "altText": "Athlète franchissant une barre lors d’une compétition en extérieur",
+    "isPublished": true
+  }
+}
