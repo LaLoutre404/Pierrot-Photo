@@ -8,25 +8,25 @@ import {
   quote,
   skills,
 } from "@/content/site";
+import { HOME_UNIVERSE_SLOTS } from "@/lib/home-slots";
 import { getHomePhotos } from "@/lib/photos";
 
 export const metadata: Metadata = {
   title: "Portfolio",
   description:
-    "Découvrez le portfolio photographique de Pierre Bousquet : portraits, spectacle vivant, sport et scènes urbaines.",
+    "Découvrez le portfolio photographique de Pierre Bousquet : portraits, spectacle vivant et sport.",
 };
 
 export const revalidate = 60;
 
 export default async function HomePage() {
   const photos = await getHomePhotos();
-  const pick = (index: number) => photos[index % Math.max(photos.length, 1)];
 
   return (
     <>
       <section className="home-hero" aria-labelledby="portfolio-title">
         <PhotoFrame
-          photo={pick(0)}
+          photo={photos.hero}
           className="home-hero__image"
           priority
           sizes="100vw"
@@ -47,7 +47,7 @@ export default async function HomePage() {
         <div className="section-number">01</div>
         <div className="about-section__image">
           <PhotoFrame
-            photo={pick(1)}
+            photo={photos.about}
             label="Portrait de Pierre Bousquet à importer"
             sizes="(max-width: 768px) 100vw, 42vw"
           />
@@ -75,11 +75,11 @@ export default async function HomePage() {
           ))}
         </ol>
         <div className="editorial-row" aria-label="Sélection photographique">
-          {[2, 3, 4, 5].map((index) => (
+          {(["skills-1", "skills-2", "skills-3", "skills-4"] as const).map((slot, index) => (
             <PhotoFrame
-              key={index}
-              photo={pick(index)}
-              label={`Photographie ${index - 1} à importer`}
+              key={slot}
+              photo={photos[slot]}
+              label={`Photographie de compétences ${index + 1} à choisir dans l’administration`}
               sizes="(max-width: 640px) 50vw, 25vw"
             />
           ))}
@@ -88,7 +88,7 @@ export default async function HomePage() {
 
       <section className="quote-section">
         <PhotoFrame
-          photo={pick(6)}
+          photo={photos.quote}
           className="quote-section__image"
           sizes="100vw"
           label="Photographie du bandeau citation à importer"
@@ -102,7 +102,7 @@ export default async function HomePage() {
 
       <section className="univers-section" id="univers" aria-labelledby="univers-title">
         <header>
-          <p className="eyebrow">Quatre écritures</p>
+          <p className="eyebrow">Trois écritures</p>
           <h2 id="univers-title">Univers photographiques</h2>
         </header>
         <div className="univers-grid">
@@ -116,7 +116,7 @@ export default async function HomePage() {
                 style={{ "--category-color": category.themeColor } as React.CSSProperties}
               >
                 <PhotoFrame
-                  photo={pick(7 + index)}
+                  photo={photos[HOME_UNIVERSE_SLOTS[slug]]}
                   label={`Série ${category.title} à importer`}
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />

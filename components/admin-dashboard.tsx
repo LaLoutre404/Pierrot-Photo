@@ -12,11 +12,13 @@ import {
   useState,
 } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { HOME_PHOTO_SLOTS } from "@/lib/home-slots";
+import type { HomePhotoSlotKey } from "@/lib/home-slots";
 import {
   detectImageMime,
   MAX_SOURCE_BYTES,
 } from "@/lib/image-validation";
-import type { Category, Photo } from "@/lib/types";
+import type { Category, HomePhotoSlotAssignment, Photo } from "@/lib/types";
 
 type QueueStatus = "ready" | "processing" | "uploading" | "done" | "error";
 
@@ -36,6 +38,7 @@ interface QueueItem {
 interface AdminPayload {
   categories: Category[];
   photos: Photo[];
+  homeSlots: HomePhotoSlotAssignment[];
 }
 
 async function fileSignature(file: File) {
@@ -101,7 +104,11 @@ function uploadWithProgress(formData: FormData, onProgress: (value: number) => v
 }
 
 export function AdminDashboard({ userEmail }: { userEmail: string }) {
-  const [data, setData] = useState<AdminPayload>({ categories: [], photos: [] });
+  const [data, setData] = useState<AdminPayload>({
+    categories: [],
+    photos: [],
+    homeSlots: [],
+  });
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [queue, setQueue] = useState<QueueItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -154,6 +161,18 @@ export function AdminDashboard({ userEmail }: { userEmail: string }) {
         (photo) => activeCategory === "all" || photo.category_id === activeCategory,
       ),
     [activeCategory, data.photos],
+  );
+  const photosById = useMemo(
+    () => new Map(data.photos.map((photo) => [photo.id, photo])),
+    [data.photos],
+  );
+  const categoriesById = useMemo(
+    () => new Map(data.categories.map((category) => [category.id, category])),
+    [data.categories],
+  );
+  const homeAssignments = useMemo(
+    () => new Map(data.homeSlots.map((slot) => [slot.slot_key, slot.photo_id])),
+    [data.homeSlots],
   );
 
   function addFiles(fileList: FileList | File[]) {
@@ -235,6 +254,20 @@ export function AdminDashboard({ userEmail }: { userEmail: string }) {
       return;
     }
     setNotice({ type: "success", text: success });
+    await refresh();
+  }
+
+  async function updateHomeSlot(slotKey: HomePhotoSlotKey, photoId: string | null) {
+    const response = await fetch("/api/admin/home-slots", {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ slotKey, photoId }),
+    });
+    if (!response.ok) {
+      setNotice({ type: "error", text: "L’emplacement de la page d’accueil n’a pas été enregistré." });
+      return;
+    }
+    setNotice({ type: "success", text: "Emplacement de la page d’accueil enregistré." });
     await refresh();
   }
 
@@ -427,6 +460,69 @@ export function AdminDashboard({ userEmail }: { userEmail: string }) {
         ) : null}
       </section>
 
+      <section className="homepage-panel" aria-labelledby="homepage-title">
+        <div className="homepage-panel__heading">
+          <div>
+            <p className="eyebrow">Page de présentation</p>
+            <h2 id="homepage-title">Choisir chaque emplacement</h2>
+            <p>
+              Sélectionnez précisément la photographie affichée dans chaque zone de l’accueil.
+              Une photo masquée restera invisible tant qu’elle n’est pas publiée.
+            </p>
+          </div>
+          <Link href="/" target="_blank">Ouvrir la page d’accueil ↗</Link>
+        </div>
+        <div className="home-slot-grid">
+          {HOME_PHOTO_SLOTS.map((slot) => {
+            const selectedId = homeAssignments.get(slot.key) ?? "";
+            const selectedPhoto = selectedId ? photosById.get(selectedId) : undefined;
+            return (
+              <article className="home-slot-card" key={slot.key}>
+                <div className="home-slot-card__preview">
+                  {selectedPhoto?.signed_url ? (
+                    <Image
+                      src={selectedPhoto.signed_url}
+                      alt=""
+                      fill
+                      sizes="(max-width: 768px) 100vw, 25vw"
+                    />
+                  ) : (
+                    <span>Aucune photo choisie</span>
+                  )}
+                  <small>{slot.group}</small>
+                </div>
+                <div className="home-slot-card__body">
+                  <label>
+                    {slot.label}
+                    <select
+                      value={selectedId}
+                      onChange={(event) =>
+                        void updateHomeSlot(slot.key, event.target.value || null)
+                      }
+                    >
+                      <option value="">Aucune photographie</option>
+                      {data.photos.map((photo) => (
+                        <option value={photo.id} key={photo.id}>
+                          Photo {photo.sequence_number} — {categoriesById.get(photo.category_id)?.title}
+                          {photo.is_published ? "" : " (masquée)"}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <p>{slot.description}</p>
+                  {selectedPhoto ? (
+                    <span>
+                      Photo {selectedPhoto.sequence_number}
+                      {selectedPhoto.is_published ? " · publiée" : " · masquée"}
+                    </span>
+                  ) : null}
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
       <section className="library-panel" aria-labelledby="library-title">
         <div className="library-panel__top">
           <div>
@@ -511,9 +607,9 @@ export function AdminDashboard({ userEmail }: { userEmail: string }) {
                     <input
                       type="checkbox"
                       checked={photo.is_featured}
-                      onChange={(event) => void updatePhoto(photo.id, { is_featured: event.target.checked }, event.target.checked ? "Photo de couverture définie." : "Photo de couverture retirée.")}
+                      onChange={(event) => void updatePhoto(photo.id, { is_featured: event.target.checked }, event.target.checked ? "Image principale de la galerie définie." : "Image principale de la galerie retirée.")}
                     />
-                    Couverture
+                    Image principale de la page galerie
                   </label>
                 </div>
                 <div className="admin-photo-card__actions">

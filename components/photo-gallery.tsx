@@ -84,7 +84,6 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               />
             ) : null}
-            {photo.caption ? <span>{photo.caption}</span> : null}
           </button>
         ))}
       </div>
@@ -152,7 +151,6 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
             <span>
               {activeIndex! + 1} / {photos.length}
             </span>
-            {active.caption ? <p>{active.caption}</p> : null}
           </div>
         </div>
       ) : null}

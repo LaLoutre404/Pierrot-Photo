@@ -23,7 +23,7 @@ export function PhotoFrame({
   }
 
   return (
-    <figure className={`photo-frame ${className}`}>
+    <div className={`photo-frame ${className}`}>
       <Image
         src={photo.signed_url}
         alt={photo.alt_text}
@@ -31,7 +31,6 @@ export function PhotoFrame({
         priority={priority}
         sizes={sizes}
       />
-      {photo.caption ? <figcaption>{photo.caption}</figcaption> : null}
-    </figure>
+    </div>
   );
 }

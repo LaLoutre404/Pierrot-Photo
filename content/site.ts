@@ -5,7 +5,7 @@ export const siteConfig = {
   studioName: "Studio Pierro",
   title: "Photographe — Pierre Bousquet",
   description:
-    "Portfolio de Pierre Bousquet, photographe de portraits, spectacle vivant, sport et univers urbain.",
+    "Portfolio de Pierre Bousquet, photographe de portraits, spectacle vivant et sport.",
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   phoneDisplay: "06 77 83 75 54",
   phoneHref: "+33677837554",
@@ -49,7 +49,6 @@ export const categoryContent: Record<
     themeColor: string;
     textColor: string;
     eyebrow: string;
-    bullets?: string[];
   }
 > = {
   shooting: {
@@ -58,7 +57,6 @@ export const categoryContent: Record<
     eyebrow: "Portrait · Extérieur",
     themeColor: "#e6c99c",
     textColor: "#2b2927",
-    bullets: ["Portrait", "Extérieur"],
     description:
       "Chaque séance photo est une rencontre, un échange destiné à mettre en lumière votre personnalité et votre singularité. Que ce soit pour un portrait artistique, un projet professionnel ou un souvenir personnel, j’accorde une attention particulière à vos attentes et à l’atmosphère que vous souhaitez transmettre. Le résultat : des images authentiques, élégantes et uniques, qui vous ressemblent pleinement.",
   },
@@ -79,15 +77,6 @@ export const categoryContent: Record<
     textColor: "#fff7ed",
     description:
       "La photographie sportive demande une grande réactivité et une attention particulière aux détails. Mon objectif est de figer l’intensité du mouvement et l’émotion de l’instant, qu’il s’agisse d’un geste technique, d’une expression de concentration ou de la célébration d’une victoire. Chaque image devient ainsi le reflet de l’énergie, de la passion et du dépassement de soi propres aux athlètes.",
-  },
-  urbain: {
-    title: "Urbain",
-    shortTitle: "Architecture",
-    eyebrow: "Ville · Lumière · Structure",
-    themeColor: "#9d8966",
-    textColor: "#272522",
-    description:
-      "La ville est un terrain d’expression riche, où chaque bâtiment, chaque perspective et chaque jeu d’ombre raconte une histoire. À travers mes images, je cherche à révéler la beauté cachée des espaces urbains, qu’ils soient modernes ou chargés d’histoire. Entre compositions graphiques et scènes de vie spontanées, la photographie urbaine et architecturale devient un dialogue entre l’homme, la lumière et la structure.",
   },
 };
 

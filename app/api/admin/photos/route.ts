@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getWebPDimensions, MAX_WEBP_BYTES } from "@/lib/image-validation";
 import { requireAdmin } from "@/lib/supabase/server";
-import type { Category, Photo } from "@/lib/types";
+import type { Category, HomePhotoSlotAssignment, Photo } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -13,22 +13,34 @@ export async function GET() {
   const { supabase, isAdmin } = await requireAdmin();
   if (!supabase || !isAdmin) return unauthorized();
 
-  const [{ data: categories, error: categoryError }, { data: photos, error: photoError }] =
+  const [
+    { data: categories, error: categoryError },
+    { data: photos, error: photoError },
+    { data: homeSlots, error: homeSlotsError },
+  ] =
     await Promise.all([
-      supabase.from("categories").select("*").order("sort_order"),
+      supabase
+        .from("categories")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order"),
       supabase
         .from("photos")
         .select("*")
         .order("category_id")
         .order("sort_order")
         .order("sequence_number"),
+      supabase.from("home_photo_slots").select("slot_key, photo_id").order("slot_key"),
     ]);
 
-  if (categoryError || photoError) {
+  if (categoryError || photoError || homeSlotsError) {
     return NextResponse.json({ error: "Lecture de la photothèque impossible." }, { status: 500 });
   }
 
-  const typedPhotos = (photos ?? []) as Photo[];
+  const activeCategoryIds = new Set((categories ?? []).map((category) => category.id));
+  const typedPhotos = ((photos ?? []) as Photo[]).filter((photo) =>
+    activeCategoryIds.has(photo.category_id),
+  );
   const { data: signed } = typedPhotos.length
     ? await supabase.storage
         .from("portfolio")
@@ -43,6 +55,7 @@ export async function GET() {
 
   return NextResponse.json({
     categories: (categories ?? []) as Category[],
+    homeSlots: (homeSlots ?? []) as HomePhotoSlotAssignment[],
     photos: typedPhotos.map((photo) => ({
       ...photo,
       signed_url: urls.get(photo.storage_path) ?? undefined,
@@ -87,6 +100,7 @@ export async function POST(request: Request) {
     .from("categories")
     .select("id, slug")
     .eq("id", categoryId)
+    .eq("is_active", true)
     .maybeSingle();
   if (!category) {
     return NextResponse.json({ error: "Catégorie introuvable." }, { status: 400 });

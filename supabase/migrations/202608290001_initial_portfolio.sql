@@ -9,6 +9,7 @@ create table if not exists public.categories (
   description text not null default '',
   theme_color text not null check (theme_color ~ '^#[0-9A-Fa-f]{6}$'),
   sort_order integer not null default 0 check (sort_order >= 0),
+  is_active boolean not null default true,
   created_at timestamptz not null default now()
 );
 
@@ -36,12 +37,33 @@ create table if not exists public.admin_users (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.home_photo_slots (
+  slot_key text primary key check (
+    slot_key in (
+      'hero',
+      'about',
+      'skills-1',
+      'skills-2',
+      'skills-3',
+      'skills-4',
+      'quote',
+      'universe-shooting',
+      'universe-spectacle-vivant',
+      'universe-sport'
+    )
+  ),
+  photo_id uuid references public.photos(id) on delete set null,
+  updated_at timestamptz not null default now()
+);
+
 create index if not exists photos_category_order_idx
   on public.photos(category_id, sort_order, sequence_number);
 create index if not exists photos_published_idx
   on public.photos(is_published) where is_published = true;
 create unique index if not exists one_featured_photo_per_category_idx
   on public.photos(category_id) where is_featured = true;
+create index if not exists home_photo_slots_photo_idx
+  on public.home_photo_slots(photo_id);
 
 create or replace function public.set_updated_at()
 returns trigger
@@ -57,6 +79,11 @@ $$;
 drop trigger if exists photos_set_updated_at on public.photos;
 create trigger photos_set_updated_at
 before update on public.photos
+for each row execute function public.set_updated_at();
+
+drop trigger if exists home_photo_slots_set_updated_at on public.home_photo_slots;
+create trigger home_photo_slots_set_updated_at
+before update on public.home_photo_slots
 for each row execute function public.set_updated_at();
 
 create or replace function public.is_admin()
@@ -94,11 +121,12 @@ grant execute on function public.allocate_photo_sequence() to authenticated, ser
 alter table public.categories enable row level security;
 alter table public.photos enable row level security;
 alter table public.admin_users enable row level security;
+alter table public.home_photo_slots enable row level security;
 
 create policy "Public can read categories"
   on public.categories for select
   to anon, authenticated
-  using (true);
+  using (is_active = true or public.is_admin());
 
 create policy "Admins can manage categories"
   on public.categories for all
@@ -109,7 +137,17 @@ create policy "Admins can manage categories"
 create policy "Public can read published photos"
   on public.photos for select
   to anon, authenticated
-  using (is_published = true or public.is_admin());
+  using (
+    public.is_admin()
+    or (
+      is_published = true
+      and exists (
+        select 1 from public.categories
+        where categories.id = photos.category_id
+          and categories.is_active = true
+      )
+    )
+  );
 
 create policy "Admins can insert photos"
   on public.photos for insert
@@ -131,6 +169,25 @@ create policy "Users can verify their admin membership"
   on public.admin_users for select
   to authenticated
   using (user_id = auth.uid());
+
+create policy "Public can read visible home photo slots"
+  on public.home_photo_slots for select
+  to anon, authenticated
+  using (
+    public.is_admin()
+    or photo_id is null
+    or exists (
+      select 1 from public.photos
+      where photos.id = home_photo_slots.photo_id
+        and photos.is_published = true
+    )
+  );
+
+create policy "Admins can manage home photo slots"
+  on public.home_photo_slots for all
+  to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
 
 insert into public.categories (slug, title, description, theme_color, sort_order)
 values
@@ -154,19 +211,27 @@ values
     'La photographie sportive demande une grande réactivité et une attention particulière aux détails afin de figer l’intensité du mouvement et l’émotion de l’instant.',
     '#a85b1d',
     2
-  ),
-  (
-    'urbain',
-    'Urbain',
-    'La ville est un terrain d’expression riche, où chaque bâtiment, chaque perspective et chaque jeu d’ombre raconte une histoire.',
-    '#9d8966',
-    3
   )
 on conflict (slug) do update set
   title = excluded.title,
   description = excluded.description,
   theme_color = excluded.theme_color,
-  sort_order = excluded.sort_order;
+  sort_order = excluded.sort_order,
+  is_active = true;
+
+insert into public.home_photo_slots (slot_key)
+values
+  ('hero'),
+  ('about'),
+  ('skills-1'),
+  ('skills-2'),
+  ('skills-3'),
+  ('skills-4'),
+  ('quote'),
+  ('universe-shooting'),
+  ('universe-spectacle-vivant'),
+  ('universe-sport')
+on conflict (slot_key) do nothing;
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (
@@ -191,8 +256,10 @@ create policy "Public can read stored published photos"
       or exists (
         select 1
         from public.photos
+        join public.categories on categories.id = photos.category_id
         where photos.storage_path = storage.objects.name
           and photos.is_published = true
+          and categories.is_active = true
       )
     )
   );

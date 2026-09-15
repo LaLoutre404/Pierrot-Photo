@@ -41,6 +41,12 @@ export default async function GalleryPage({
   const content = categoryContent[typedSlug];
   const { photos } = await getGallery(typedSlug);
   const featured = photos.find((photo) => photo.is_featured) ?? photos[0];
+  const orderedPhotos = featured
+    ? [featured, ...photos.filter((photo) => photo.id !== featured.id)]
+    : photos;
+  const heroPhotoCount = typedSlug === "sport" ? 3 : 2;
+  const heroPhotos = orderedPhotos.slice(0, heroPhotoCount);
+  const galleryPhotos = orderedPhotos.slice(heroPhotoCount);
 
   return (
     <article
@@ -52,31 +58,38 @@ export default async function GalleryPage({
         } as React.CSSProperties
       }
     >
-      <header className="gallery-hero">
+      <header className={`gallery-hero gallery-hero--${typedSlug}`}>
         <div className="gallery-hero__copy">
-          <p className="eyebrow">{content.eyebrow}</p>
           <h1>{content.title}</h1>
-          {content.bullets ? (
-            <ul>
-              {content.bullets.map((bullet) => (
-                <li key={bullet}>{bullet}</li>
-              ))}
-            </ul>
-          ) : null}
           <p>{content.description}</p>
-          <span>{photos.length ? `${photos.length} photographies` : "Série en préparation"}</span>
         </div>
         <PhotoFrame
-          photo={featured}
-          className="gallery-hero__image"
+          photo={heroPhotos[0]}
+          className="gallery-hero__image gallery-hero__image--lead"
           priority
-          sizes="(max-width: 768px) 100vw, 58vw"
-          label={`Image de couverture ${content.title} à importer`}
+          sizes="(max-width: 768px) 50vw, 50vw"
+          label={`Image principale ${content.title} à importer`}
         />
+        <PhotoFrame
+          photo={heroPhotos[1]}
+          className="gallery-hero__image gallery-hero__image--secondary"
+          sizes="(max-width: 768px) 50vw, 32vw"
+          label={`Deuxième image ${content.title} à importer`}
+        />
+        {typedSlug === "sport" ? (
+          <PhotoFrame
+            photo={heroPhotos[2]}
+            className="gallery-hero__image gallery-hero__image--tertiary"
+            sizes="(max-width: 768px) 100vw, 32vw"
+            label="Troisième image Sport à importer"
+          />
+        ) : null}
       </header>
-      <section className="gallery-body" aria-label={`Photographies — ${content.title}`}>
-        <PhotoGallery photos={photos} />
-      </section>
+      {galleryPhotos.length ? (
+        <section className="gallery-body" aria-label={`Photographies — ${content.title}`}>
+          <PhotoGallery photos={galleryPhotos} />
+        </section>
+      ) : null}
     </article>
   );
 }

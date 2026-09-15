@@ -1,8 +1,6 @@
-export type CategorySlug =
-  | "shooting"
-  | "spectacle-vivant"
-  | "sport"
-  | "urbain";
+import type { HomePhotoSlotKey } from "@/lib/home-slots";
+
+export type CategorySlug = "shooting" | "spectacle-vivant" | "sport";
 
 export interface Category {
   id: string;
@@ -11,6 +9,7 @@ export interface Category {
   description: string;
   theme_color: string;
   sort_order: number;
+  is_active: boolean;
   created_at?: string;
 }
 
@@ -36,3 +35,11 @@ export interface GalleryData {
   category: Category;
   photos: Photo[];
 }
+
+export interface HomePhotoSlotAssignment {
+  slot_key: HomePhotoSlotKey;
+  photo_id: string | null;
+  updated_at?: string;
+}
+
+export type HomePhotosBySlot = Partial<Record<HomePhotoSlotKey, Photo>>;

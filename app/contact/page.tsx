@@ -10,24 +10,25 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <section className="contact-page">
-      <p className="eyebrow">Votre projet commence ici</p>
       <h1>Contacts</h1>
       <p className="contact-page__intro">{contactIntro}</p>
       <div className="contact-links">
-        <a href={`tel:${siteConfig.phoneHref}`}>
-          <span>Téléphone</span>
+        <a href={`tel:${siteConfig.phoneHref}`} aria-label={`Téléphoner au ${siteConfig.phoneDisplay}`}>
+          <span aria-hidden="true">●</span>
           <strong>{siteConfig.phoneDisplay}</strong>
-          <i>Appeler →</i>
         </a>
-        <a href={siteConfig.instagramUrl} target="_blank" rel="noreferrer">
-          <span>Instagram</span>
+        <a
+          href={siteConfig.instagramUrl}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={`Voir le compte Instagram ${siteConfig.instagramHandle}`}
+        >
+          <span aria-hidden="true">◎</span>
           <strong>@{siteConfig.instagramHandle}</strong>
-          <i>Voir le profil →</i>
         </a>
-        <a href={`mailto:${siteConfig.email}`}>
-          <span>E-mail</span>
+        <a href={`mailto:${siteConfig.email}`} aria-label={`Écrire à ${siteConfig.email}`}>
+          <span aria-hidden="true">@</span>
           <strong>{siteConfig.email}</strong>
-          <i>Écrire →</i>
         </a>
       </div>
     </section>

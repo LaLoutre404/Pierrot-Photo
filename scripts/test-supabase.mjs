@@ -66,9 +66,11 @@ try {
   const { data: categories, error: categoryError } = await admin
     .from("categories")
     .select("id, slug")
+    .eq("is_active", true)
     .order("sort_order");
   if (categoryError) throw categoryError;
-  assert.equal(categories.length, 4);
+  assert.equal(categories.length, 3);
+  assert.equal(categories.some((category) => category.slug === "urbain"), false);
   const sport = categories.find((category) => category.slug === "sport");
   const shooting = categories.find((category) => category.slug === "shooting");
   assert.ok(sport && shooting);
@@ -136,6 +138,19 @@ try {
     .select("id, sort_order")
     .eq("id", photoId);
   assert.equal(published?.[0]?.sort_order, 4);
+
+  const { error: slotError } = await admin
+    .from("home_photo_slots")
+    .update({ photo_id: photoId })
+    .eq("slot_key", "hero");
+  if (slotError) throw slotError;
+
+  const { data: publicSlot } = await anonymous
+    .from("home_photo_slots")
+    .select("photo_id")
+    .eq("slot_key", "hero")
+    .single();
+  assert.equal(publicSlot?.photo_id, photoId);
 
   const { error: moveError } = await admin
     .from("photos")

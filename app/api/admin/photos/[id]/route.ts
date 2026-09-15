@@ -54,6 +54,7 @@ export async function PATCH(
       .from("categories")
       .select("id")
       .eq("id", updates.category_id)
+      .eq("is_active", true)
       .maybeSingle();
     if (!category) return NextResponse.json({ error: "Catégorie introuvable." }, { status: 400 });
     const { data: last } = await supabase

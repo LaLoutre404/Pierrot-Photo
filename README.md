@@ -13,6 +13,61 @@ Tailwind CSS et Supabase. Le site public est éditorial et responsive ; l’espa
 > par le logo définitif lorsque le fichier source sera fourni. Aucun logo n’a été
 > extrait des captures.
 
+## Architecture en un coup d’œil
+
+```mermaid
+flowchart LR
+  V[Visiteur] --> P[Pages publiques Next.js]
+  A[Photographe] --> C[/admin/connexion]
+  C --> BO[Back-office Next.js]
+  P -->|lecture des contenus publiés| DB[(Supabase PostgreSQL)]
+  P -->|URL signées temporaires| ST[(Supabase Storage privé)]
+  BO -->|session vérifiée côté serveur| AU[Supabase Auth]
+  BO -->|ajout, édition, ordre et emplacements| DB
+  BO -->|WebP optimisés| ST
+  AU --> AD[admin_users]
+  AD -->|autorise les écritures via RLS| DB
+```
+
+Le navigateur ne reçoit que la clé publique `anon`. Supabase Auth identifie
+l’utilisateur, `admin_users` confirme qu’il s’agit bien de l’administrateur, puis
+les politiques RLS décident ce que chaque requête a le droit de lire ou modifier.
+
+```mermaid
+erDiagram
+  AUTH_USERS ||--o| ADMIN_USERS : autorise
+  CATEGORIES ||--o{ PHOTOS : classe
+  PHOTOS ||--o{ HOME_PHOTO_SLOTS : occupe
+  PHOTOS ||--|| STORAGE_OBJECTS : reference
+
+  CATEGORIES {
+    uuid id PK
+    text slug UK
+    boolean is_active
+    integer sort_order
+  }
+  PHOTOS {
+    uuid id PK
+    bigint sequence_number UK
+    text storage_path UK
+    uuid category_id FK
+    integer sort_order
+    boolean is_featured
+    boolean is_published
+  }
+  HOME_PHOTO_SLOTS {
+    text slot_key PK
+    uuid photo_id FK
+  }
+  ADMIN_USERS {
+    uuid user_id PK,FK
+  }
+```
+
+Les emplacements de l’accueil sont indépendants de l’ordre des galeries : changer
+une image de la bannière ou de la citation ne déplace donc aucune photo dans sa
+catégorie.
+
 ## 1. Installation
 
 Prérequis : Node.js 22.13 ou supérieur et un projet Supabase.
@@ -41,15 +96,17 @@ npm run photos:import -- <dossier> --manifest <manifest.json>
 ## 3. Créer et préparer Supabase
 
 1. Créer un nouveau projet sur Supabase.
-2. Dans **SQL Editor**, exécuter le fichier
-   `supabase/migrations/202608290001_initial_portfolio.sql`.
+2. Dans **SQL Editor**, exécuter dans l’ordre les fichiers du dossier
+   `supabase/migrations/` (pour une base existante, appliquer au minimum
+   `202609150001_home_slots_and_remove_urbain.sql`).
 3. Vérifier dans **Storage** que le bucket privé `portfolio` existe.
-4. Vérifier dans **Table Editor** que les tables `categories`, `photos` et
-   `admin_users` existent.
+4. Vérifier dans **Table Editor** que les tables `categories`, `photos`,
+   `home_photo_slots` et `admin_users` existent.
 
 La migration crée :
 
-- les quatre catégories et leurs couleurs ;
+- les trois catégories actives et leurs couleurs ;
+- les dix emplacements administrables de la page d’accueil ;
 - la séquence globale et non réutilisable des photographies ;
 - le bucket privé limité aux WebP de 12 Mo ;
 - les index et le déclencheur `updated_at` ;
@@ -148,8 +205,7 @@ Organisation recommandée :
 photos-originales/
 ├── shooting/
 ├── spectacle-vivant/
-├── sport/
-└── urbain/
+└── sport/
 ```
 
 Copier `scripts/photos-manifest.example.json`, puis fournir pour chaque image un
@@ -183,7 +239,21 @@ suppression ne libère jamais son numéro.
    ou couverture.
 7. Filtrer une catégorie pour réordonner par glisser-déposer ou avec les boutons
    haut/bas utilisables au clavier.
-8. Utiliser **Prévisualiser le site** avant de terminer.
+8. Dans **Page de présentation**, choisir la photographie exacte pour chacun des
+   dix emplacements de l’accueil : bannière, portrait, compétences, citation et
+   couvertures des trois univers.
+9. Utiliser **Prévisualiser le site** avant de terminer.
+
+Une photographie affectée à un emplacement de l’accueil est automatiquement
+retirée des galeries publiques afin d’éviter les doublons. L’option **Image
+principale de la page galerie** choisit uniquement la première grande image de la
+page de cette catégorie ; les couvertures visibles sur l’accueil se règlent dans
+**Page de présentation**.
+
+Les textes alternatifs et les légendes restent modifiables et conservés dans la
+base. Les légendes ne sont toutefois pas affichées sur le site public ; les textes
+alternatifs restent utilisés par les lecteurs d’écran et lorsque cela est requis
+pour l’accessibilité.
 
 La suppression demande une confirmation et retire le fichier de Storage ainsi que
 sa ligne de base. L’ordre (`sort_order`) est indépendant du nom physique.
@@ -198,7 +268,7 @@ Le projet est un projet Next.js standard. Sur Vercel :
 3. Ne pas déclarer `SUPABASE_SERVICE_ROLE_KEY` : elle n’est pas nécessaire au site.
 4. Déployer, puis renseigner l’URL finale dans Supabase :
    **Authentication → URL Configuration → Site URL**.
-5. Lancer un dernier contrôle de `/`, des quatre galeries, de `/contact` et de
+5. Lancer un dernier contrôle de `/`, des trois galeries, de `/contact` et de
    `/admin`.
 
 Tout hébergeur compatible Next.js 16 et Node.js 22 peut être utilisé. Le build de

@@ -5,7 +5,7 @@ import { readdir, readFile } from "node:fs/promises";
 import { extname, join, parse, relative } from "node:path";
 import sharp from "sharp";
 
-const allowedSlugs = ["shooting", "spectacle-vivant", "sport", "urbain"];
+const allowedSlugs = ["shooting", "spectacle-vivant", "sport"];
 const acceptedExtensions = new Set([".jpg", ".jpeg", ".png", ".webp"]);
 const natural = new Intl.Collator("fr", { numeric: true, sensitivity: "base" });
 
