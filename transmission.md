@@ -2,6 +2,10 @@
 
 Dernière mise à jour : 17 novembre 2026
 
+## Simplification de la page d’avis — 17 novembre 2026
+
+- Après avoir retiré l’introduction du haut, le propriétaire a demandé de retirer aussi le bloc « Poursuivons la conversation » et ses deux liens. La page ne conserve que la carte éditoriale et le bouton direct « Laissez un avis ».
+
 ## Remplacement de la page d’avis — 17 novembre 2026
 
 - À la demande du propriétaire, le widget Elfsight et son composant, son identifiant de configuration, sa section de confidentialité et ses textes dédiés ont été supprimés.

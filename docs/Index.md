@@ -82,7 +82,7 @@ L’alias TypeScript `@/` pointe vers la racine du projet. Les types applicatifs
 | --- | --- | --- |
 | `/` | Accueil, présentation, compétences, univers, contact | [`app/page.tsx`](../app/page.tsx) |
 | `/galerie/[slug]` | Galeries Shooting, Spectacle vivant et Sport | [`app/galerie/[slug]/page.tsx`](<../app/galerie/[slug]/page.tsx>) |
-| `/avis-clients` | Invitation à laisser un avis sur Google et lien vers la fiche | [`app/avis-clients/page.tsx`](../app/avis-clients/page.tsx) |
+| `/avis-clients` | Invitation à laisser un avis sur Google | [`app/avis-clients/page.tsx`](../app/avis-clients/page.tsx) |
 | `/contact` | Téléphone, Instagram et courriel | [`app/contact/page.tsx`](../app/contact/page.tsx) |
 | `/mentions-legales` et `/politique-confidentialite` | Informations juridiques éditables | [`app/mentions-legales/page.tsx`](../app/mentions-legales/page.tsx), [`app/politique-confidentialite/page.tsx`](../app/politique-confidentialite/page.tsx) |
 | `/admin/connexion` et `/admin` | Connexion puis gestion du contenu | [`app/admin/`](../app/admin/) |
@@ -202,7 +202,7 @@ Le test Supabase crée et supprime des données ; le script refuse une cible dis
 
 La version comprenant les dernières modifications visuelles et l’édition des textes a été déployée sur `https://pierrot-photo.vercel.app` le 12 octobre 2026, après autorisation du propriétaire. La table `site_texts` existe aussi dans Supabase. Les modifications locales ultérieures n’apparaîtront sur le site public qu’après un nouveau déploiement.
 
-`/avis-clients` propose une page éditoriale avec un bouton direct « Laissez un avis » vers la fiche Google Studio Pierro et un lien pour consulter la fiche. Le widget Elfsight, son script et sa section dans la politique de confidentialité ont été retirés à la demande du propriétaire. Cette version a été déployée sur `https://pierrot-photo.vercel.app` le 17 novembre 2026. L’accès à l’API Google Business Profile ayant été refusé, le lecteur paginé conservé dans `lib/google-business-reviews.ts` n’est pas utilisé par cette page. Le [document de la page d’avis](./plan-page-avis-google.md) détaille son fonctionnement.
+`/avis-clients` propose une page éditoriale avec un bouton direct « Laissez un avis » vers la fiche Google Studio Pierro. Les blocs secondaires de haut et de bas ont été retirés à la demande du propriétaire, ainsi que le widget Elfsight, son script et sa section dans la politique de confidentialité. Cette version a été déployée sur `https://pierrot-photo.vercel.app` le 17 novembre 2026. L’accès à l’API Google Business Profile ayant été refusé, le lecteur paginé conservé dans `lib/google-business-reviews.ts` n’est pas utilisé par cette page. Le [document de la page d’avis](./plan-page-avis-google.md) détaille son fonctionnement.
 
 Les mentions légales et la politique de confidentialité sont présentes, mais certains champs de leurs valeurs par défaut restent marqués **« À COMPLÉTER PAR LE CLIENT »**. Ils doivent être renseignés avec les informations réelles avant de considérer le contenu juridique comme final. Les textes alternatifs existants méritent également une revue éditoriale, photo par photo.
 

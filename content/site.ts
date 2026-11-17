@@ -12,7 +12,6 @@ export const siteConfig = {
   email: "pbousquet.photo@gmail.com",
   instagramHandle: "pierro_photo_",
   instagramUrl: "https://www.instagram.com/pierro_photo_/",
-  googleReviewsUrl: "https://share.google/wp1jlRRDwnxNFTcJP",
   googleWriteReviewUrl: "https://search.google.com/local/writereview?placeid=ChIJ0yDGy0yJ0GUR-lPbukv619k",
   legal: {
     address: "À COMPLÉTER PAR LE CLIENT",

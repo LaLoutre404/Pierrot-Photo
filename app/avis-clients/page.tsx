@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { siteConfig } from "@/content/site";
 import { getSiteTexts } from "@/lib/get-site-texts";
 
@@ -31,17 +30,6 @@ export default async function TestimonialsPage() {
           <span className="reviews-invite__art-quote">“</span>
           <span className="reviews-invite__art-stars">★★★★★</span>
           <span className="reviews-invite__art-bottom">{t["reviews.artBottom"]}</span>
-        </div>
-      </section>
-
-      <section className="reviews-next" aria-labelledby="reviews-next-title">
-        <div>
-          <p className="eyebrow">{t["reviews.moreEyebrow"]}</p>
-          <h2 id="reviews-next-title">{t["reviews.moreTitle"]}</h2>
-        </div>
-        <div className="reviews-next__links">
-          <a className="text-link" href={siteConfig.googleReviewsUrl} target="_blank" rel="noopener noreferrer">{t["reviews.all"]} ↗</a>
-          <Link className="text-link" href="/contact">{t["reviews.link"]}</Link>
         </div>
       </section>
     </div>

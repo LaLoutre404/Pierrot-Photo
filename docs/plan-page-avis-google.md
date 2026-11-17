@@ -8,7 +8,7 @@ La page [`/avis-clients`](../app/avis-clients/page.tsx) invite le visiteur à la
 
 `https://search.google.com/local/writereview?placeid=ChIJ0yDGy0yJ0GUR-lPbukv619k`
 
-Un lien secondaire ouvre la [fiche Google](https://share.google/wp1jlRRDwnxNFTcJP) pour consulter les avis existants. La page ne montre aucun compteur ni aucun avis inventé. Ses textes sont modifiables dans le back-office via [`lib/site-texts.ts`](../lib/site-texts.ts).
+La page ne montre aucun compteur ni aucun avis inventé. Ses textes sont modifiables dans le back-office via [`lib/site-texts.ts`](../lib/site-texts.ts).
 
 ## Historique du choix
 
@@ -19,6 +19,5 @@ Le lecteur paginé [`lib/google-business-reviews.ts`](../lib/google-business-rev
 ## Vérifications
 
 - Le lien principal ouvre le formulaire d’avis de Studio Pierro dans un nouvel onglet.
-- Le lien secondaire ouvre la fiche Google.
 - La page reste lisible sur mobile et au clavier, sans débordement horizontal.
 - La politique de confidentialité ne mentionne aucun widget d’avis supprimé.

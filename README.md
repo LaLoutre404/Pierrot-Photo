@@ -300,8 +300,7 @@ npm run build
 
 La page `/avis-clients` invite les visiteurs à laisser un avis directement sur
 la fiche Google de Studio Pierro. Le bouton principal ouvre le formulaire d’avis
-avec le `Place ID` `ChIJ0yDGy0yJ0GUR-lPbukv619k`. Un lien secondaire ouvre la
-fiche pour consulter les avis. Les textes de la page restent modifiables dans
+avec le `Place ID` `ChIJ0yDGy0yJ0GUR-lPbukv619k`. Les textes de la page restent modifiables dans
 le back-office. Aucun widget ni script tiers n’est chargé par cette page.
 
 Le lecteur Google Business Profile préparé dans `lib/google-business-reviews.ts`
