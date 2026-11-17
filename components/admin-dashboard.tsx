@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { AdminTexts } from "@/components/admin-texts";
 import {
   ChangeEvent,
   DragEvent,
@@ -357,6 +358,8 @@ export function AdminDashboard({ userEmail }: { userEmail: string }) {
           <button type="button" aria-label="Fermer le message" onClick={() => setNotice(null)}>×</button>
         </div>
       ) : null}
+
+      <AdminTexts />
 
       <section className="upload-panel" aria-labelledby="upload-title">
         <div>

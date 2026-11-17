@@ -12,6 +12,8 @@ export const siteConfig = {
   email: "pbousquet.photo@gmail.com",
   instagramHandle: "pierro_photo_",
   instagramUrl: "https://www.instagram.com/pierro_photo_/",
+  googleReviewsUrl: "https://share.google/wp1jlRRDwnxNFTcJP",
+  googleWriteReviewUrl: "https://search.google.com/local/writereview?placeid=ChIJ0yDGy0yJ0GUR-lPbukv619k",
   legal: {
     address: "À COMPLÉTER PAR LE CLIENT",
     siret: "À COMPLÉTER PAR LE CLIENT",
@@ -84,9 +86,3 @@ export const categorySlugs = Object.keys(categoryContent) as CategorySlug[];
 
 export const contactIntro =
   "À l’écoute de vos projets, qu’ils soient personnels, artistiques ou professionnels, j’aborde chaque collaboration comme une opportunité de donner vie à des images uniques et empreintes de sens. Je vous invite à me contacter pour échanger autour de vos besoins et envisager ensemble la meilleure façon de concrétiser vos idées.";
-
-export const testimonials: Array<{
-  quote: string;
-  author: string;
-  context?: string;
-}> = [];

@@ -1,43 +1,60 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { testimonials } from "@/content/site";
+import { siteConfig } from "@/content/site";
+import { getSiteTexts } from "@/lib/get-site-texts";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Avis clients",
-  description: "Retours de clients ayant confié leurs images à Pierre Bousquet.",
+  description: "Partagez votre expérience avec Studio Pierro et laissez un avis Google sur le travail de Pierre Bousquet.",
 };
 
-export default function TestimonialsPage() {
+export default async function TestimonialsPage() {
+  const t = await getSiteTexts();
+
   return (
-    <section className="testimonials-page">
-      <header>
-        <p className="eyebrow">Collaborations</p>
-        <h1>Avis clients</h1>
-        <p>
-          Cette page accueillera les témoignages authentiques des personnes et structures
-          accompagnées. Aucun avis fictif n’est publié.
-        </p>
+    <div className="testimonials-page">
+      <header className="reviews-hero">
+        <div className="reviews-hero__heading">
+          <p className="eyebrow">{t["reviews.eyebrow"]}</p>
+          <h1>{t["reviews.title"]}</h1>
+        </div>
+        <div className="reviews-hero__aside">
+          <span className="reviews-hero__asterisk" aria-hidden="true">✳</span>
+          <p>{t["reviews.intro"]}</p>
+        </div>
       </header>
-      {testimonials.length ? (
-        <div className="testimonials-list">
-          {testimonials.map((testimonial) => (
-            <blockquote key={`${testimonial.author}-${testimonial.quote}`}>
-              <p>« {testimonial.quote} »</p>
-              <footer>
-                {testimonial.author}
-                {testimonial.context ? ` — ${testimonial.context}` : ""}
-              </footer>
-            </blockquote>
-          ))}
+
+      <section className="reviews-invite" aria-labelledby="reviews-invite-title">
+        <div className="reviews-invite__copy">
+          <p className="eyebrow">{t["reviews.ctaEyebrow"]}</p>
+          <h2 id="reviews-invite-title">{t["reviews.ctaTitle"]}</h2>
+          <p className="reviews-invite__body">{t["reviews.ctaBody"]}</p>
+          <a className="reviews-invite__button" href={siteConfig.googleWriteReviewUrl} target="_blank" rel="noopener noreferrer">
+            <span>{t["reviews.leave"]}</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+          <p className="reviews-invite__note">{t["reviews.googleNote"]}</p>
         </div>
-      ) : (
-        <div className="testimonials-empty">
-          <span>Les premiers témoignages seront ajoutés ici.</span>
-          <Link className="text-link" href="/contact">
-            Parler de votre projet →
-          </Link>
+        <div className="reviews-invite__art" aria-hidden="true">
+          <span className="reviews-invite__art-top">{t["reviews.artTop"]}</span>
+          <span className="reviews-invite__art-quote">“</span>
+          <span className="reviews-invite__art-stars">★★★★★</span>
+          <span className="reviews-invite__art-bottom">{t["reviews.artBottom"]}</span>
         </div>
-      )}
-    </section>
+      </section>
+
+      <section className="reviews-next" aria-labelledby="reviews-next-title">
+        <div>
+          <p className="eyebrow">{t["reviews.moreEyebrow"]}</p>
+          <h2 id="reviews-next-title">{t["reviews.moreTitle"]}</h2>
+        </div>
+        <div className="reviews-next__links">
+          <a className="text-link" href={siteConfig.googleReviewsUrl} target="_blank" rel="noopener noreferrer">{t["reviews.all"]} ↗</a>
+          <Link className="text-link" href="/contact">{t["reviews.link"]}</Link>
+        </div>
+      </section>
+    </div>
   );
 }

@@ -2,7 +2,7 @@
 
 Site portfolio professionnel réalisé avec Next.js (App Router), TypeScript strict,
 Tailwind CSS et Supabase. Le site public est éditorial et responsive ; l’espace
-`/admin` permet à Pierre de gérer ses photographies sans modifier le code.
+`/admin` permet à Pierre de gérer ses photographies et les textes publics sans modifier le code.
 
 > État du contenu : le dépôt initial ne contenait aucune photographie originale.
 > Les captures Canva jointes ont servi uniquement de référence visuelle et ne sont
@@ -97,11 +97,11 @@ npm run photos:import -- <dossier> --manifest <manifest.json>
 
 1. Créer un nouveau projet sur Supabase.
 2. Dans **SQL Editor**, exécuter dans l’ordre les fichiers du dossier
-   `supabase/migrations/` (pour une base existante, appliquer au minimum
-   `202609150001_home_slots_and_remove_urbain.sql`).
+   `supabase/migrations/` qui ne sont pas encore appliqués. La migration
+   `202610120001_site_texts.sql` ajoute les textes éditables aux bases existantes.
 3. Vérifier dans **Storage** que le bucket privé `portfolio` existe.
 4. Vérifier dans **Table Editor** que les tables `categories`, `photos`,
-   `home_photo_slots` et `admin_users` existent.
+   `home_photo_slots`, `site_texts` et `admin_users` existent.
 
 La migration crée :
 
@@ -243,6 +243,9 @@ suppression ne libère jamais son numéro.
    dix emplacements de l’accueil : bannière, portrait, compétences, citation et
    couvertures des trois univers.
 9. Utiliser **Prévisualiser le site** avant de terminer.
+10. Dans **Modifier les textes**, ouvrir une rubrique, changer le texte voulu,
+    puis cliquer sur **Enregistrer**. Les coordonnées modifient aussi les liens
+    de contact. La migration des textes doit être appliquée avant cette étape.
 
 Une photographie affectée à un emplacement de l’accueil est automatiquement
 retirée des galeries publiques afin d’éviter les doublons. L’option **Image
@@ -292,6 +295,18 @@ npm run build
   confidentialité ;
 - URL du domaine final ;
 - validation finale des textes extraits de la maquette.
+
+## 11. Avis Google
+
+La page `/avis-clients` invite les visiteurs à laisser un avis directement sur
+la fiche Google de Studio Pierro. Le bouton principal ouvre le formulaire d’avis
+avec le `Place ID` `ChIJ0yDGy0yJ0GUR-lPbukv619k`. Un lien secondaire ouvre la
+fiche pour consulter les avis. Les textes de la page restent modifiables dans
+le back-office. Aucun widget ni script tiers n’est chargé par cette page.
+
+Le lecteur Google Business Profile préparé dans `lib/google-business-reviews.ts`
+n'est plus appelé par la page, car l'accès API au projet a été refusé. Voir le
+[document de la page d’avis](docs/plan-page-avis-google.md).
 
 ## Accessibilité et comportement
 

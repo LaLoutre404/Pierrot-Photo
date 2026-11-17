@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { contactIntro, siteConfig } from "@/content/site";
+import { getSiteTexts } from "@/lib/get-site-texts";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -7,28 +7,29 @@ export const metadata: Metadata = {
     "Contactez Pierre Bousquet pour un shooting, un reportage de spectacle, de sport ou un projet photographique.",
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const t = await getSiteTexts();
   return (
     <section className="contact-page">
-      <h1>Contacts</h1>
-      <p className="contact-page__intro">{contactIntro}</p>
+      <h1>{t["contact.title"]}</h1>
+      <p className="contact-page__intro">{t["contact.intro"]}</p>
       <div className="contact-links">
-        <a href={`tel:${siteConfig.phoneHref}`} aria-label={`Téléphoner au ${siteConfig.phoneDisplay}`}>
+        <a href={`tel:${t["contact.phoneHref"]}`} aria-label={`Téléphoner au ${t["contact.phoneDisplay"]}`}>
           <span aria-hidden="true">●</span>
-          <strong>{siteConfig.phoneDisplay}</strong>
+          <strong>{t["contact.phoneDisplay"]}</strong>
         </a>
         <a
-          href={siteConfig.instagramUrl}
+          href={t["contact.instagramUrl"]}
           target="_blank"
           rel="noreferrer"
-          aria-label={`Voir le compte Instagram ${siteConfig.instagramHandle}`}
+          aria-label={`Voir le compte Instagram ${t["contact.instagramHandle"]}`}
         >
           <span aria-hidden="true">◎</span>
-          <strong>@{siteConfig.instagramHandle}</strong>
+          <strong>@{t["contact.instagramHandle"]}</strong>
         </a>
-        <a href={`mailto:${siteConfig.email}`} aria-label={`Écrire à ${siteConfig.email}`}>
+        <a href={`mailto:${t["contact.email"]}`} aria-label={`Écrire à ${t["contact.email"]}`}>
           <span aria-hidden="true">@</span>
-          <strong>{siteConfig.email}</strong>
+          <strong>{t["contact.email"]}</strong>
         </a>
       </div>
     </section>

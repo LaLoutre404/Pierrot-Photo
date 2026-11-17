@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { siteConfig } from "@/content/site";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { getSiteTexts } from "@/lib/get-site-texts";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -33,19 +34,20 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   colorScheme: "light",
-  themeColor: "#111111",
+  themeColor: "#141415",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const t = await getSiteTexts();
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
     name: "Pierre Bousquet — Photographe",
     description: siteConfig.description,
     url: siteConfig.siteUrl,
-    email: siteConfig.email,
-    telephone: siteConfig.phoneHref,
-    sameAs: [siteConfig.instagramUrl],
+    email: t["contact.email"],
+    telephone: t["contact.phoneHref"],
+    sameAs: [t["contact.instagramUrl"]],
   };
 
   return (
@@ -54,12 +56,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a className="skip-link" href="#contenu">
           Aller au contenu
         </a>
-        <SiteHeader />
+        <SiteHeader t={t} />
         <main id="contenu">{children}</main>
-        <SiteFooter />
+        <SiteFooter t={t} />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
         />
       </body>
     </html>

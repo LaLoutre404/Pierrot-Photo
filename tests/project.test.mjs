@@ -36,6 +36,18 @@ test("database migration enforces publication and admin-only writes", async () =
   assert.match(sql, /create sequence if not exists public\.photo_sequence/);
 });
 
+test("editable site texts remain public to read and admin-only to write", async () => {
+  const [sql, route] = await Promise.all([
+    source("supabase/migrations/202610120001_site_texts.sql"),
+    source("app/api/admin/texts/route.ts"),
+  ]);
+  assert.match(sql, /site_texts enable row level security/);
+  assert.match(sql, /site_texts for select[\s\S]*using \(true\)/);
+  assert.match(sql, /site_texts for all[\s\S]*public\.is_admin\(\)/);
+  assert.match(route, /requireAdmin\(\)/);
+  assert.match(route, /!supabase \|\| !isAdmin/);
+});
+
 test("home photo slots are protected and Urbain is retired", async () => {
   const [sql, slots, dashboard] = await Promise.all([
     source("supabase/migrations/202609150001_home_slots_and_remove_urbain.sql"),
@@ -67,6 +79,7 @@ test("admin endpoints verify the server-side admin identity", async () => {
     source("app/api/admin/photos/[id]/route.ts"),
     source("app/api/admin/reorder/route.ts"),
     source("app/api/admin/home-slots/route.ts"),
+    source("app/api/admin/texts/route.ts"),
   ]);
   for (const route of routes) {
     assert.match(route, /requireAdmin\(\)/);

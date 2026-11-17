@@ -4,6 +4,7 @@ import { PhotoFrame } from "@/components/photo-frame";
 import { PhotoGallery } from "@/components/photo-gallery";
 import { categoryContent, categorySlugs } from "@/content/site";
 import { getGallery } from "@/lib/photos";
+import { getSiteTexts } from "@/lib/get-site-texts";
 import type { CategorySlug } from "@/lib/types";
 
 export const revalidate = 60;
@@ -19,13 +20,14 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   if (!categorySlugs.includes(slug as CategorySlug)) return {};
-  const category = categoryContent[slug as CategorySlug];
+  const t = await getSiteTexts();
+  const typedSlug = slug as CategorySlug;
   return {
-    title: `Galerie ${category.title}`,
-    description: category.description,
+    title: `Galerie ${t[`gallery.${typedSlug}.title`]}`,
+    description: t[`gallery.${typedSlug}.description`],
     openGraph: {
-      title: `${category.title} — Pierre Bousquet`,
-      description: category.description,
+      title: `${t[`gallery.${typedSlug}.title`]} — Pierre Bousquet`,
+      description: t[`gallery.${typedSlug}.description`],
     },
   };
 }
@@ -39,7 +41,7 @@ export default async function GalleryPage({
   if (!categorySlugs.includes(slug as CategorySlug)) notFound();
   const typedSlug = slug as CategorySlug;
   const content = categoryContent[typedSlug];
-  const { photos } = await getGallery(typedSlug);
+  const [{ photos }, t] = await Promise.all([getGallery(typedSlug), getSiteTexts()]);
   const featured = photos.find((photo) => photo.is_featured) ?? photos[0];
   const orderedPhotos = featured
     ? [featured, ...photos.filter((photo) => photo.id !== featured.id)]
@@ -60,8 +62,8 @@ export default async function GalleryPage({
     >
       <header className={`gallery-hero gallery-hero--${typedSlug}`}>
         <div className="gallery-hero__copy">
-          <h1>{content.title}</h1>
-          <p>{content.description}</p>
+          <h1>{t[`gallery.${typedSlug}.title`]}</h1>
+          <p>{t[`gallery.${typedSlug}.description`]}</p>
         </div>
         <PhotoFrame
           photo={heroPhotos[0]}

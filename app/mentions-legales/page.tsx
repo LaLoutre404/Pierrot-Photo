@@ -1,29 +1,26 @@
 import type { Metadata } from "next";
-import { siteConfig } from "@/content/site";
+import { getSiteTexts } from "@/lib/get-site-texts";
 
 export const metadata: Metadata = { title: "Mentions légales" };
 
-export default function LegalPage() {
+export default async function LegalPage() {
+  const t = await getSiteTexts();
   return (
     <article className="legal-page">
-      <p className="eyebrow">Informations légales</p>
-      <h1>Mentions légales</h1>
-      <h2>Éditeur du site</h2>
-      <p>Pierre Bousquet — Photographe</p>
-      <p>Adresse : {siteConfig.legal.address}</p>
-      <p>SIRET : {siteConfig.legal.siret}</p>
-      <p>Directeur de la publication : {siteConfig.legal.publicationDirector}</p>
-      <h2>Hébergement</h2>
-      <p>{siteConfig.legal.host}</p>
-      <h2>Propriété intellectuelle</h2>
+      <p className="eyebrow">{t["legal.eyebrow"]}</p>
+      <h1>{t["legal.title"]}</h1>
+      <h2>{t["legal.publisherTitle"]}</h2>
+      <p>{t["legal.publisher"]}</p>
+      <p>Adresse : {t["legal.address"]}</p>
+      <p>SIRET : {t["legal.siret"]}</p>
+      <p>Directeur de la publication : {t["legal.publicationDirector"]}</p>
+      <h2>{t["legal.hostTitle"]}</h2>
+      <p>{t["legal.host"]}</p>
+      <h2>{t["legal.copyrightTitle"]}</h2>
+      <p>{t["legal.copyright"]}</p>
+      <h2>{t["legal.contactTitle"]}</h2>
       <p>
-        Les photographies et les textes présents sur ce site sont protégés par le droit
-        d’auteur. Toute reproduction, diffusion ou exploitation sans autorisation écrite
-        préalable est interdite.
-      </p>
-      <h2>Contact</h2>
-      <p>
-        Pour toute question : <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>.
+        {t["legal.contactIntro"]} <a href={`mailto:${t["contact.email"]}`}>{t["contact.email"]}</a>.
       </p>
     </article>
   );

@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PhotoFrame } from "@/components/photo-frame";
+import { HomeHeroMotion } from "@/components/home-hero-motion";
 import {
-  about,
   categoryContent,
   categorySlugs,
-  quote,
-  skills,
 } from "@/content/site";
+import { getSiteTexts } from "@/lib/get-site-texts";
 import { HOME_UNIVERSE_SLOTS } from "@/lib/home-slots";
 import { getHomePhotos } from "@/lib/photos";
 
@@ -20,11 +19,15 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const photos = await getHomePhotos();
+  const [photos, t] = await Promise.all([getHomePhotos(), getSiteTexts()]);
 
   return (
     <>
+      <noscript>
+        <style>{`body:has(.home-hero) .wordmark{visibility:visible!important;transform:none!important} .home-hero .home-hero__content{visibility:visible!important;opacity:1!important}`}</style>
+      </noscript>
       <section className="home-hero" aria-labelledby="portfolio-title">
+        <HomeHeroMotion />
         <PhotoFrame
           photo={photos.hero}
           className="home-hero__image"
@@ -34,12 +37,12 @@ export default async function HomePage() {
         />
         <div className="home-hero__veil" />
         <div className="home-hero__content">
-          <p>Pierre Bousquet</p>
-          <h1 id="portfolio-title">Portfolio</h1>
-          <span>Photographe</span>
+          <p>{t["home.hero.name"]}</p>
+          <h1 id="portfolio-title">{t["home.hero.title"]}</h1>
+          <span>{t["brand.role"]}</span>
         </div>
         <a className="home-hero__scroll" href="#a-propos">
-          Découvrir ↓
+          {t["home.hero.scroll"]}
         </a>
       </section>
 
@@ -53,24 +56,23 @@ export default async function HomePage() {
           />
         </div>
         <div className="about-section__copy">
-          <p className="eyebrow">Le regard derrière l’objectif</p>
-          <h2>{about.title}</h2>
-          {about.paragraphs.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
+          <p className="eyebrow">{t["home.about.eyebrow"]}</p>
+          <h2>{t["home.about.title"]}</h2>
+          <p>{t["home.about.paragraph1"]}</p>
+          <p>{t["home.about.paragraph2"]}</p>
         </div>
       </section>
 
       <section className="skills-section" aria-labelledby="skills-title">
         <div className="skills-section__heading">
-          <p className="eyebrow">Savoir-faire</p>
-          <h2 id="skills-title">Mes compétences</h2>
+          <p className="eyebrow">{t["home.skills.eyebrow"]}</p>
+          <h2 id="skills-title">{t["home.skills.title"]}</h2>
         </div>
         <ol className="skills-list">
-          {skills.map((skill, index) => (
-            <li key={skill}>
+          {([1, 2, 3, 4] as const).map((number, index) => (
+            <li key={number}>
               <span>0{index + 1}</span>
-              <p>{skill}</p>
+              <p>{t[`home.skills.item${number}`]}</p>
             </li>
           ))}
         </ol>
@@ -95,15 +97,15 @@ export default async function HomePage() {
         />
         <div className="quote-section__veil" />
         <blockquote>
-          <p>« {quote.text} »</p>
-          <cite>— {quote.author}</cite>
+          <p>« {t["home.quote.text"]} »</p>
+          <cite>— {t["home.quote.author"]}</cite>
         </blockquote>
       </section>
 
       <section className="univers-section" id="univers" aria-labelledby="univers-title">
         <header>
-          <p className="eyebrow">Trois écritures</p>
-          <h2 id="univers-title">Univers photographiques</h2>
+          <p className="eyebrow">{t["home.univers.eyebrow"]}</p>
+          <h2 id="univers-title">{t["home.univers.title"]}</h2>
         </header>
         <div className="univers-grid">
           {categorySlugs.map((slug, index) => {
@@ -117,14 +119,14 @@ export default async function HomePage() {
               >
                 <PhotoFrame
                   photo={photos[HOME_UNIVERSE_SLOTS[slug]]}
-                  label={`Série ${category.title} à importer`}
+                  label={`Série ${t[`gallery.${slug}.title`]} à importer`}
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 <span className="universe-card__index">0{index + 1}</span>
                 <div>
-                  <p>{category.eyebrow}</p>
-                  <h3>{category.title}</h3>
-                  <span>Voir la galerie →</span>
+                  <p>{t[`gallery.${slug}.eyebrow`]}</p>
+                  <h3>{t[`gallery.${slug}.title`]}</h3>
+                  <span>{t["home.univers.link"]}</span>
                 </div>
               </Link>
             );
@@ -133,10 +135,10 @@ export default async function HomePage() {
       </section>
 
       <section className="contact-callout">
-        <p>Un projet, une histoire, un instant à préserver.</p>
-        <h2>Créons ensemble des images qui vous ressemblent.</h2>
+        <p>{t["home.contact.kicker"]}</p>
+        <h2>{t["home.contact.title"]}</h2>
         <Link className="text-link" href="/contact">
-          Prendre contact <span>→</span>
+          {t["home.contact.link"]} <span>→</span>
         </Link>
       </section>
     </>

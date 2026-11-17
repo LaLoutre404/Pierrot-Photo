@@ -1,31 +1,31 @@
 import Link from "next/link";
-import { siteConfig } from "@/content/site";
+import type { SiteTexts } from "@/lib/site-texts";
 
-export function SiteFooter() {
+export function SiteFooter({ t }: { t: SiteTexts }) {
   return (
     <footer className="site-footer">
       <div className="site-footer__grid">
         <div>
-          <p className="footer-kicker">Une image à construire ?</p>
+          <p className="footer-kicker">{t["footer.kicker"]}</p>
           <Link className="footer-title" href="/contact">
-            Parlons de votre projet
+            {t["footer.title"]}
           </Link>
         </div>
         <div className="footer-contact">
-          <a href={`tel:${siteConfig.phoneHref}`}>{siteConfig.phoneDisplay}</a>
-          <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
-          <a href={siteConfig.instagramUrl} target="_blank" rel="noreferrer">
-            @{siteConfig.instagramHandle}
+          <a href={`tel:${t["contact.phoneHref"]}`}>{t["contact.phoneDisplay"]}</a>
+          <a href={`mailto:${t["contact.email"]}`}>{t["contact.email"]}</a>
+          <a href={t["contact.instagramUrl"]} target="_blank" rel="noreferrer">
+            @{t["contact.instagramHandle"]}
           </a>
         </div>
       </div>
       <div className="site-footer__bottom">
-        <span>© {new Date().getFullYear()} Pierre Bousquet</span>
+        <span>© {new Date().getFullYear()} {t["footer.copyright"]}</span>
         <div>
-          <Link href="/mentions-legales">Mentions légales</Link>
-          <Link href="/politique-confidentialite">Confidentialité</Link>
+          <Link href="/mentions-legales">{t["footer.legal"]}</Link>
+          <Link href="/politique-confidentialite">{t["footer.privacy"]}</Link>
           <Link href="/admin" aria-label="Administration du portfolio">
-            Administration
+            {t["footer.admin"]}
           </Link>
         </div>
       </div>
