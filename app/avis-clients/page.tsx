@@ -15,21 +15,10 @@ export default async function TestimonialsPage() {
 
   return (
     <div className="testimonials-page">
-      <header className="reviews-hero">
-        <div className="reviews-hero__heading">
-          <p className="eyebrow">{t["reviews.eyebrow"]}</p>
-          <h1>{t["reviews.title"]}</h1>
-        </div>
-        <div className="reviews-hero__aside">
-          <span className="reviews-hero__asterisk" aria-hidden="true">✳</span>
-          <p>{t["reviews.intro"]}</p>
-        </div>
-      </header>
-
       <section className="reviews-invite" aria-labelledby="reviews-invite-title">
         <div className="reviews-invite__copy">
           <p className="eyebrow">{t["reviews.ctaEyebrow"]}</p>
-          <h2 id="reviews-invite-title">{t["reviews.ctaTitle"]}</h2>
+          <h1 id="reviews-invite-title">{t["reviews.ctaTitle"]}</h1>
           <p className="reviews-invite__body">{t["reviews.ctaBody"]}</p>
           <a className="reviews-invite__button" href={siteConfig.googleWriteReviewUrl} target="_blank" rel="noopener noreferrer">
             <span>{t["reviews.leave"]}</span>

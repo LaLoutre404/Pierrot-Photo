@@ -999,50 +999,14 @@ body:has(.home-hero:not(.is-ready)) .wordmark {
 .testimonials-page {
   max-width: 1600px;
   margin: 0 auto;
-}
-
-.reviews-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(16rem, 0.6fr);
-  gap: clamp(2rem, 6vw, 6rem);
-  align-items: end;
-  padding-bottom: clamp(4rem, 8vw, 8rem);
-  border-bottom: 1px solid var(--ink);
-}
-
-.reviews-hero h1 {
-  max-width: 10ch;
-  margin: 0;
-  font-size: clamp(4.6rem, 10vw, 10rem);
-  line-height: 0.9;
-}
-
-.reviews-hero__aside {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: clamp(1rem, 3vw, 3rem);
-  padding-bottom: 0.4rem;
-}
-
-.reviews-hero__asterisk {
-  color: #a69370;
-  font-size: clamp(4rem, 8vw, 8rem);
-  line-height: 0.8;
-}
-
-.reviews-hero__aside p {
-  max-width: 28rem;
-  margin: 0;
-  font-size: clamp(1.1rem, 1.65vw, 1.4rem);
-  line-height: 1.4;
+  padding-top: clamp(2rem, 5vw, 5rem);
 }
 
 .reviews-invite {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
   min-height: 38rem;
-  margin: clamp(4rem, 8vw, 8rem) 0;
+  margin: 0 0 clamp(4rem, 8vw, 8rem);
   background: #141415;
   color: var(--paper);
 }
@@ -1055,7 +1019,7 @@ body:has(.home-hero:not(.is-ready)) .wordmark {
   padding: clamp(2.5rem, 6vw, 7rem);
 }
 
-.reviews-invite h2 {
+.reviews-invite h1 {
   max-width: 11ch;
   margin: 0 0 clamp(2rem, 4vw, 4rem);
   font-family: var(--font-display), Georgia, serif;
@@ -2114,28 +2078,15 @@ button:disabled {
     min-height: 44px;
   }
 
-  .reviews-hero,
   .reviews-invite,
   .reviews-next {
     grid-template-columns: 1fr;
     gap: 2rem;
   }
 
-  .reviews-hero h1 {
-    font-size: clamp(4rem, 15vw, 7rem);
-  }
-
-  .reviews-hero__aside {
-    gap: 1.5rem;
-  }
-
-  .reviews-hero__asterisk {
-    font-size: 4rem;
-  }
-
   .reviews-invite {
     gap: 0;
-    margin: 4rem 0;
+    margin: 0 0 4rem;
   }
 
   .reviews-invite__copy {
